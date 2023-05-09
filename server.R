@@ -20,7 +20,7 @@ function(input, output, session) {
   observeEvent(input$tool_choice, {
     if (input$tool_choice == "SeqNet")  
       p <- 100
-    data1<-read_csv('grn-vtool\Data_Cortex_Nuclear')
+
     network_1 <- random_network(p)
     generated_data <- gen_rnaseq(n, data1)
     g<-plot(network_2)
