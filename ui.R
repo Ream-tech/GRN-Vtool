@@ -9,31 +9,87 @@
 
 library(shiny)
 library(shinydashboard)
+library(SeqNet)
+library(htmltools)
 
+
+# Define the UI
 ui <- dashboardPage(
-  dashboardHeader(title = "GRN VTOOLS"),
+  
+  
+  # Define the dashboard header
+  dashboardHeader(title = div(
+    img(src = normalizePath("C:/Users/user/Desktop/GRNN/GRN/GRNNEW/logo.jpeg"), height = "30px"),
+    "GRN VTOOLS",
+    style = "display: flex; align-items: center; justify-content: center;"
+  ), 
+  titleWidth = 300),
+  
+              
+  
+  # Define the sidebar
   dashboardSidebar(
-    sidebarMenu(
-      menuItem("Data import", tabName = "Data import", icon = icon("th")),
-      fileInput("file1", "Choose a file"),
-      menuItem("Normalisation", tabName = "Normalisation", icon = icon("th")),
-      menuItem("Exploratory analysis", tabName = "Exploratory analysis", icon = icon("th")),
-      menuItem("Differntial Expression", tabName = "Differntial Expression", icon = icon("th")),
-      selectInput("Distibution","Please Select a Tool:", choices =c("SeqNet", "DIANE")),
-      menuItem("Network Generation", tabName = "Network Generation", icon = icon("th"))
-    )
+    
+    # Choose the number of data files to upload
+    radioButtons("num_files", label = "Number of Files:",
+                 choices = list("One File" = "one",
+                                "Two Files" = "two"), 
+                 selected = "one"),
+    
+    # Upload data file(s)
+    conditionalPanel(
+      condition = "input.num_files == 'one'",
+      fileInput("data_file1", "Upload Data File", 
+                accept = c(".csv", ".tsv", ".txt")),
+      br()
+    ),
+    conditionalPanel(
+      condition = "input.num_files == 'two'",
+      fileInput("data_file1", "Upload Data File 1", 
+                accept = c(".csv", ".tsv", ".txt")),
+      br(),
+      fileInput("data_file2", "Upload Data File 2", 
+                accept = c(".csv", ".tsv", ".txt")),
+      br()
+    ),
+    
+    # Normalize data
+    actionButton("normalize_button", label = "Normalize Data", 
+                 icon = icon("arrows-alt-h"), 
+                 style = "background-color: purple; color: white"),
+    
+    # Perform exploratory data analysis
+    actionButton("eda_button", label = "Exploratory Expression", 
+                 icon = icon("line-chart"), 
+                 style = "background-color: purple; color: white"),
+    
+    # Choose network generation tool
+    selectInput("tool_choice", label = "Choose Network Generation Tool:", 
+                choices = list("SeqNet", "DIANE"), 
+                selected = "SeqNet"),
+    
+    # Generate network
+    actionButton("network_button", label = "Generate Network", 
+                 icon = icon("sitemap"), 
+                 style = "background-color: purple; color: white")
   ),
+  
+  # Define the main body
   dashboardBody(
-    tableOutput("content")
+    
+    # Display the network plot
+    box(
+      title = "Gene Network",
+      status = "primary",
+      solidHeader = TRUE,
+      width = 12,
+      plotOutput("network_plot")
+    )
+    
   )
+  
 )
 
-server <- function(input, output) {
-  output$content <- renderTable({
-    infile <- input$file1
-    if (is.null(infile)) return(NULL)
-    read.csv(infile$datapath)
-  })
-}
-
-shinyApp(ui, server)
+                          
+# Run the application 
+shinyApp(ui = ui, server = server)
