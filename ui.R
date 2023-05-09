@@ -7,14 +7,11 @@
 #    http://shiny.rstudio.com/
 #
 
-library(shiny)
-library(shinydashboard)
-library(SeqNet)
-library(htmltools)
+
 
 
 # Define the UI
-ui <- dashboardPage(
+dashboardPage(
   
   
   # Define the dashboard header
@@ -25,7 +22,7 @@ ui <- dashboardPage(
   ), 
   titleWidth = 300),
   
-              
+  
   
   # Define the sidebar
   dashboardSidebar(
@@ -65,7 +62,7 @@ ui <- dashboardPage(
     
     # Choose network generation tool
     selectInput("tool_choice", label = "Choose Network Generation Tool:", 
-                choices = list("SeqNet", "DIANE"), 
+                choices = c("SeqNet", "DIANE"), 
                 selected = "SeqNet"),
     
     # Generate network
@@ -76,20 +73,29 @@ ui <- dashboardPage(
   
   # Define the main body
   dashboardBody(
+   
     
     # Display the network plot
+    
     box(
+     
       title = "Gene Network",
       status = "primary",
       solidHeader = TRUE,
-      width = 12,
-      plotOutput("network_plot")
-    )
+      width = 20,
+      
+      fluidRow(
+      splitLayout(cellWidths = c("50%", "50%"),plotOutput("network_plot"),
+      plotOutput("network_plot_2")
+      
+      )
     
+    
+      )
+    
+  ) 
   )
   
 )
-
                           
-# Run the application 
-shinyApp(ui = ui, server = server)
+
