@@ -12,14 +12,24 @@
 
 # Define server logic required to draw a histogram
 function(input, output, session) {
- 
-  p <- 100
-   network_1 <- random_network(p)
-   network_2 <- as_single_module(network_1)
-   g<-plot(network_1)
-  observeEvent(input$SeqNet, {
-  output$p1<-renderPlot({plot(g)})
+  observeEvent(input$network_button, {
+    
+    
+    
 
-  })
+  observeEvent(input$tool_choice, {
+    if (input$tool_choice == "SeqNet")  
+      p <- 100
+    data1<-read_csv('grn-vtool\Data_Cortex_Nuclear')
+    network_1 <- random_network(p)
+    generated_data <- gen_rnaseq(n, data1)
+    g<-plot(network_2)
+  
+      output$network_plot<-renderPlot({plot(g)})
+      output$network_plot_2<-renderPlot({plot(g)})
+  })##end if seqnet
 
-}
+
+  })##end network butten
+
+}##end function
